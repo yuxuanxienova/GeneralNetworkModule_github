@@ -30,6 +30,16 @@ public class NetManager
     readonly static int MAX_MESSAGE_FIRE = 10;
 
 
+    //是否启用心跳
+    public static bool isUsePing = true;
+    //心跳间隔时间
+    public static int pingInterval = 30;
+    //上一次发送PING的时间
+    static float lastPingTime = 0;
+    //上次收到PONG的时间
+    static float lastPongTime = 0;
+
+
 
     //----------------------------------监听结构------------------------------------------
 
@@ -159,6 +169,23 @@ public class NetManager
         msgCount = 0;
 
 
+        //上一次发送PING的时间
+        lastPingTime = Time.time;
+        //上一次收到PONG的时间
+        lastPongTime = Time.time;
+        //建通PONG协议（不重复添加）
+        if (!msgListeners.ContainsKey("MsgPong")) 
+        {
+            AddMsgListener("MsgPong", OnMsgPong);
+        }
+
+
+    }
+
+    //处理PONG监听的消息
+    private static void OnMsgPong(MsgBase msgBase) 
+    {
+        lastPongTime = Time.time;
     }
 
     //--------------------------------------连接-----------------------------------
@@ -431,6 +458,7 @@ public class NetManager
     public static void Update() 
     {
         MsgUpdate();
+        PingUpdate();
     }
 
     //更新消息
@@ -468,6 +496,30 @@ public class NetManager
                 break;
             }
 
+        }
+    }
+
+    //更新发送ping协议
+    private static void PingUpdate() 
+    {
+        //判断是否启用
+        if (!isUsePing) 
+        {
+            return;
+        }
+
+        //判断当前时间与上一次发送MsgPing协议的时间间隔，控制发送ping
+        if (Time.time - lastPingTime > pingInterval) 
+        {
+            MsgPing msgPing = new MsgPing();
+            Send(msgPing);
+            lastPingTime = Time.time;
+        }
+
+        //判断当前时间与上一次接收MsgPong协议的时间间隔，控制关闭连接
+        if (Time.time - lastPongTime > pingInterval * 4) 
+        {
+            Close();
         }
     }
 
