@@ -19,6 +19,9 @@ class NetManager
     //Select 的检查列表
     static List<Socket> checkRead = new List<Socket>();
 
+    //Ping间隔
+    public static long pingInterval = 30;
+
     public static void StartLoop(int listenPort) 
     {
         //Socket
@@ -81,6 +84,7 @@ class NetManager
             Console.WriteLine("Accept" + clientfd.RemoteEndPoint.ToString());
             ClientState state = new ClientState();
             state.socket = clientfd;
+            state.lastPingTime = NetManager.GetTimeStamp();//changed !initialize to current time
             clients.Add(clientfd, state);
         }
         catch (SocketException ex)
@@ -266,6 +270,14 @@ class NetManager
         }
 
 
+
+    }
+
+    //获取时间戳
+    public static long GetTimeStamp() 
+    {
+        TimeSpan ts = DateTime.UtcNow - new DateTime(1970, 1, 1, 0, 0, 0, 0);
+        return Convert.ToInt64(ts.TotalSeconds);
 
     }
 

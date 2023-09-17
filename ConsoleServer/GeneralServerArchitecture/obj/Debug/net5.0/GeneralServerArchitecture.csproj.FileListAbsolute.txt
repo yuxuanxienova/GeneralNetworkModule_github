@@ -1,0 +1,5 @@
+C:\Users\18805\Documents\Projects\GeneralNetworkModule_github\ConsoleServer\GeneralServerArchitecture\obj\Debug\net5.0\GeneralServerArchitecture.csproj.AssemblyReference.cache
+C:\Users\18805\Documents\Projects\GeneralNetworkModule_github\ConsoleServer\GeneralServerArchitecture\obj\Debug\net5.0\GeneralServerArchitecture.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\18805\Documents\Projects\GeneralNetworkModule_github\ConsoleServer\GeneralServerArchitecture\obj\Debug\net5.0\GeneralServerArchitecture.AssemblyInfoInputs.cache
+C:\Users\18805\Documents\Projects\GeneralNetworkModule_github\ConsoleServer\GeneralServerArchitecture\obj\Debug\net5.0\GeneralServerArchitecture.AssemblyInfo.cs
+C:\Users\18805\Documents\Projects\GeneralNetworkModule_github\ConsoleServer\GeneralServerArchitecture\obj\Debug\net5.0\GeneralServerArchitecture.csproj.CoreCompileInputs.cache

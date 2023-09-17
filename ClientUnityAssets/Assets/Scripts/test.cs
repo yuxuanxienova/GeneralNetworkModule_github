@@ -2,29 +2,121 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using System;
+using TMPro;
 
 
 public class test : MonoBehaviour
 {
+    public TMP_InputField idInput;
+    public TMP_InputField pwInput;
+    public TMP_InputField textInput;
     //开始
     void Start()
     {
         NetManager.AddEventListener(NetManager.NetEvent.ConnectSucc, OnConnectSucc);
         NetManager.AddEventListener(NetManager.NetEvent.ConnectFail, OnConnectFail);
         NetManager.AddEventListener(NetManager.NetEvent.Close, OnConnectClose);
-        NetManager.AddMsgListener("MsgMove", OnMsgMove);
+
+        NetManager.AddMsgListener("MsgRegister", OnMsgRegister);
+        NetManager.AddMsgListener("MsgLogin", OnMsgLogin);
+        NetManager.AddMsgListener("MsgKick", OnMsgKick);
+        NetManager.AddMsgListener("MsgGetText", OnMsgGetText);
+        NetManager.AddMsgListener("MsgSaveText", OnMsgSaveText);
+        
         
     }
-    //收到MsgMove协议
-    public void OnMsgMove(MsgBase msgBase) 
+    //----------------客户端注册功能-----------
+    //发送注册协议
+    public void OnRegisterClick() 
     {
-        MsgMove msg = (MsgMove)msgBase;
+        MsgRegister msg = new MsgRegister();
+        msg.id = idInput.text;
+        msg.pw = pwInput.text;
+        NetManager.Send(msg);
 
-        //消息处理
-        Debug.Log("OnMsgMove msg.x = " + msg.x);
-        Debug.Log("OnMsgMove msg.y = " + msg.y);
-        Debug.Log("OnMsgMove msg.z = " + msg.z);
+
     }
+    //收到注册协议
+    public void OnMsgRegister (MsgBase msgBase)
+    {
+        MsgRegister msg = (MsgRegister)msgBase;
+        if (msg.result == 0)
+        {
+            Debug.Log("注册成功");
+        }
+        else 
+        {
+            Debug.Log("注册失败");
+        }
+    }
+
+    //-------------------客户端登录功能---------------------
+    //发送登录协议
+    public void OnLoginClick() 
+    {
+        MsgLogin msg = new MsgLogin();
+        msg.id = idInput.text;
+        msg.pw = pwInput.text;
+        NetManager.Send(msg);
+
+    }
+    //收到登录协议
+    public void OnMsgLogin(MsgBase msgBase) 
+    {
+        MsgLogin msg = (MsgLogin)msgBase;
+        if (msg.result == 0)
+        {
+            Debug.Log("登录成功");
+            //请求记事本文本
+            MsgGetText msgGetText = new MsgGetText();
+            NetManager.Send(msgGetText);
+        }
+        else 
+        {
+            Debug.Log("登录失败");
+        }
+    }
+    //被踢下线
+    void OnMsgKick(MsgBase msgBase) 
+    {
+        Debug.Log("被踢下线");
+    }
+
+    //---------------------------客户端记事本功能------------------------------
+    //收到记事本文本协议
+    public void OnMsgGetText(MsgBase msgBase)
+    {
+        MsgGetText msg = (MsgGetText)msgBase;
+        textInput.text = msg.text;
+    }
+
+    //发送保存协议
+    public void OnSaveClick() 
+    {
+        MsgSaveText msg = new MsgSaveText();
+        msg.text = textInput.text;
+        NetManager.Send(msg);
+    }
+
+    //收到保存协议
+    public void OnMsgSaveText(MsgBase msgBase) 
+    {
+        MsgSaveText msg = (MsgSaveText)msgBase;
+        if (msg.result == 0)
+        {
+            Debug.Log("保存成功");
+        }
+        else 
+        {
+            Debug.Log("保存失败");
+        }
+    }
+
+
+
+
+
+    //---------------------------连接服务端----------------------------------
 
     //连接成功回调
     public void OnConnectSucc(string err) 
